@@ -16,10 +16,11 @@ require_once 'classes/CardRepository.php';
 $databaseManager = new DatabaseManager($config['host'], $config['user'], $config['password'], $config['dbname']);
 $databaseManager->connect();
 
-// This example is about a Pokémon card collection
-// Update the naming if you'd like to work with another collection
+
+
 $cardRepository = new CardRepository($databaseManager);
-$cards = $cardRepository->get();
+$books = $cardRepository->get();
+var_dump($books);
 
 // Get the current action to execute
 // If nothing is specified, it will remain empty (home should be loaded)
