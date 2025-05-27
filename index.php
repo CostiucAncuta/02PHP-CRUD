@@ -8,15 +8,24 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
 
+// Load Composer's autoloader
+require_once __DIR__ . '/vendor/autoload.php';
+
+// Load environment variables
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 // Load you classes
-require_once 'config.php';
 require_once 'classes/DatabaseManager.php';
 require_once 'classes/CardRepository.php';
 
-$databaseManager = new DatabaseManager($config['host'], $config['user'], $config['password'], $config['dbname']);
+$databaseManager = new DatabaseManager(
+    $_ENV['DB_HOST'],
+    $_ENV['DB_USER'],
+    $_ENV['DB_PASSWORD'],
+    $_ENV['DB_NAME']
+);
 $databaseManager->connect();
-
-
 
 $cardRepository = new CardRepository($databaseManager);
 $books = $cardRepository->get();
