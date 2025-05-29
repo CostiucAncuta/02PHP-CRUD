@@ -10,25 +10,30 @@ class DatabaseManager
     private string $password;
     private string $dbname;
 
-    public PDO $connection;
+    public ?PDO $connection = null;
 
     public function __construct(string $host, string $user, string $password, string $dbname)
     {
-     $this->host=$host;
-     $this->user=$user;
-     $this->password=$password;
-     $this->dbname=$dbname;
+        $this->host = $host;
+        $this->user = $user;
+        $this->password = $password;
+        $this->dbname = $dbname;
     }
 
     public function connect(): void
     {
-        // TODO: make the connection to the database using a PDO bject
-        try{
-            $dsn="mysql:host=$this->host;dbname=$this->dbname";
-            $this->connection= new PDO($dsn,$this->user,$this->password);
-            $this->connection->setAttribute(PDO :: ATTR_ERRMODE, PDO :: ERRMODE_EXCEPTION);
+        try {
+            // PostgreSQL connection string
+            $dsn = "pgsql:host={$this->host};dbname={$this->dbname}";
+            $options = [
+                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES => false,
+            ];
+            
+            $this->connection = new PDO($dsn, $this->user, $this->password, $options);
         } catch (PDOException $e) {
-            echo 'Connection failed: ' . $e->getMessage();
+            throw new PDOException("Connection failed: " . $e->getMessage());
         }
     }
 }
