@@ -16,7 +16,7 @@ class CardRepository
     public function create(array $cardData): void
     
     {
-      $sql="INSERT INTO books (title, author, genre, publisher, rating, status) VALUES(:title, :author, :genre, :publisher, :rating. :status)";
+      $sql="INSERT INTO books (title, author, genre, publisher, rating, status) VALUES(:title, :author, :genre, :publisher, :rating, :status)";
 
       $statement=$this->databaseManager->connection->prepare(($sql));
       $statement->execute(
@@ -64,14 +64,14 @@ class CardRepository
 
     public function update( int $id, array $cardData): void
     {
-     $sql = "UPDATE books SET title = :title, author = :author, genre = :genre, publisher =:publisher, rating = :rating, status= :status  WHERE id =:id";
+     $sql = "UPDATE books SET title = :title, author = :author, genre = :genre, publisher = :publisher, rating = :rating, status= :status  WHERE id =:id";
      $statement = $this->databaseManager->connection->prepare($sql);
      
      $statement-> execute([
         ':title' => $cardData['title'],
         ':author' => $cardData["author"],
         ':genre'=> $cardData["genre"],
-        ':publishe'=>$cardData["publishe"],
+        ':publisher'=>$cardData["publishe"],
         ':rating'=>$cardData["rating"],
         ':status'=>$cardData["status"],
         ':id'=>$id,

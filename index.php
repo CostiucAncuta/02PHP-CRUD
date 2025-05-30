@@ -1,7 +1,5 @@
 <?php
-
-// Require the correct variable type to be used (no auto-converting)
-declare (strict_types = 1);
+declare(strict_types=1);
 
 // Show errors so we get helpful information
 ini_set('display_errors', '1');
@@ -15,7 +13,7 @@ require_once __DIR__ . '/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
-// Load you classes
+// Load your classes
 require_once 'classes/DatabaseManager.php';
 require_once 'classes/CardRepository.php';
 
@@ -29,31 +27,70 @@ $databaseManager->connect();
 
 $cardRepository = new CardRepository($databaseManager);
 $books = $cardRepository->get();
-var_dump($books);
+?>
 
-// Get the current action to execute
-// If nothing is specified, it will remain empty (home should be loaded)
-$action = $_GET['action'] ?? null;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Collection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Book Collection</h1>
+            <a href="create.php" class="btn btn-primary">Add New Book</a>
+        </div>
 
-// Load the relevant action
-// This system will help you to only execute the code you want, instead of all of it (or complex if statements)
-switch ($action) {
-    case 'create':
-        create();
-        break;
-    default:
-        showView();
-        break;
-}
+        <?php if (empty($books)): ?>
+            <div class="alert alert-info">
+                No books found. <a href="create.php">Add your first book</a>
+            </div>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Genre</th>
+                            <th>Publisher</th>
+                            <th>Rating</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($books as $book): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($book['title']); ?></td>
+                                <td><?php echo htmlspecialchars($book['author']); ?></td>
+                                <td><?php echo htmlspecialchars($book['genre'] ?? '-'); ?></td>
+                                <td><?php echo htmlspecialchars($book['publisher'] ?? '-'); ?></td>
+                                <td><?php echo htmlspecialchars($book['rating'] ?? '-'); ?></td>
+                                <td>
+                                    <span class="badge bg-<?php echo $book['status'] === 'Available' ? 'success' : ($book['status'] === 'Borrowed' ? 'warning' : 'info'); ?>">
+                                        <?php echo htmlspecialchars($book['status']); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a href="view.php?id=<?php echo $book['id']; ?>" class="btn btn-sm btn-info">View</a>
+                                        <a href="edit.php?id=<?php echo $book['id']; ?>" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="delete.php?id=<?php echo $book['id']; ?>" class="btn btn-sm btn-danger" 
+                                           onclick="return confirm('Are you sure you want to delete this book?')">Delete</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
 
-function showView ()
-{
-    // Load your view
-    // Tip: you can load this dynamically and based on a variable, if you want to load another view
-    require 'view.php';
-}
-
-function create()
-{
-    // TODO: provide the create logic
-}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
